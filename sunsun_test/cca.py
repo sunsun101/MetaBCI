@@ -20,10 +20,10 @@ from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
 from sklearn.svm import SVC
 from joblib import Parallel, delayed
 
-from .base import FilterBankSSVEP
+from base import FilterBankSSVEP
 
 
-def _ged_wong( 
+def _ged_wong(
     Z: ndarray,
     D: Optional[ndarray] = None,
     P: Optional[ndarray] = None,
@@ -223,7 +223,8 @@ class ItCCA(BaseEstimator, TransformerMixin, ClassifierMixin):
             Us = self.Us_
         rhos = Parallel(n_jobs=self.n_jobs)(
             delayed(
-                partial(_itcca_feature, Us=Us, n_components=n_components, method=method)
+                partial(_itcca_feature, Us=Us,
+                        n_components=n_components, method=method)
             )(a, templates)
             for a in X
         )
@@ -256,7 +257,8 @@ class FBItCCA(FilterBankSSVEP, ClassifierMixin):
             n_jobs=n_jobs,
         )
 
-    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):  # type: ignore[override]
+    # type: ignore[override]
+    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):
         self.classes_ = np.unique(y)
         super().fit(X, y, Yf=Yf)
         return self
@@ -306,7 +308,8 @@ class MsCCA(BaseEstimator, TransformerMixin, ClassifierMixin):
         self.Yf_ = Yf
 
         self.U_, self.V_ = _scca_kernel(
-            np.concatenate(self.templates_, axis=-1), np.concatenate(self.Yf_, axis=-1)
+            np.concatenate(self.templates_, axis=-
+                           1), np.concatenate(self.Yf_, axis=-1)
         )
         return self
 
@@ -349,7 +352,8 @@ class FBMsCCA(FilterBankSSVEP, ClassifierMixin):
             n_jobs=n_jobs,
         )
 
-    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):  # type: ignore[override]
+    # type: ignore[override]
+    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):
         self.classes_ = np.unique(y)
         super().fit(X, y, Yf=Yf)
         return self
@@ -407,51 +411,51 @@ def _ecca_feature(
     return rhos
 
 
-class ECCA(BaseEstimator, TransformerMixin, ClassifierMixin):
-    def __init__(self, n_components: int = 1, n_jobs: Optional[int] = None):
-        self.n_components = n_components
-        self.n_jobs = n_jobs
+# class ECCA(BaseEstimator, TransformerMixin, ClassifierMixin):
+#     def __init__(self, n_components: int = 1, n_jobs: Optional[int] = None):
+#         self.n_components = n_components
+#         self.n_jobs = n_jobs
 
-    def fit(self, X: ndarray, y: ndarray, Yf: ndarray):
+#     def fit(self, X: ndarray, y: ndarray, Yf: ndarray):
 
-        self.classes_ = np.unique(y)
-        X = np.reshape(X, (-1, *X.shape[-2:]))
-        X = X - np.mean(X, axis=-1, keepdims=True)
-        self.templates_ = np.stack(
-            [np.mean(X[y == label], axis=0) for label in self.classes_]
-        )
+#         self.classes_ = np.unique(y)
+#         X = np.reshape(X, (-1, *X.shape[-2:]))
+#         X = X - np.mean(X, axis=-1, keepdims=True)
+#         self.templates_ = np.stack(
+#             [np.mean(X[y == label], axis=0) for label in self.classes_]
+#         )
 
-        Yf = np.reshape(Yf, (-1, *Yf.shape[-2:]))
-        Yf = Yf - np.mean(Yf, axis=-1, keepdims=True)
-        self.Yf_ = Yf
-        self.Us_, self.Vs_ = zip(
-            *[ 
-                for i in range(len(self.classes_))
-            ]
-        )
-        self.Us_, self.Vs_ = np.stack(self.Us_), np.stack(self.Vs_)
-        return self
+#         Yf = np.reshape(Yf, (-1, *Yf.shape[-2:]))
+#         Yf = Yf - np.mean(Yf, axis=-1, keepdims=True)
+#         self.Yf_ = Yf
+#         self.Us_, self.Vs_ = zip(
+#             *[
+#                 for i in range(len(self.classes_))
+#             ]
+#         )
+#         self.Us_, self.Vs_ = np.stack(self.Us_), np.stack(self.Vs_)
+#         return self
 
-    def transform(self, X: ndarray):
-        X = np.reshape(X, (-1, *X.shape[-2:]))
-        X = X - np.mean(X, axis=-1, keepdims=True)
-        templates = self.templates_
-        Yf = self.Yf_
-        Us = self.Us_
-        n_components = self.n_components
-        rhos = Parallel(n_jobs=self.n_jobs)(
-            delayed(partial(_ecca_feature, Us=Us, n_components=n_components))(
-                a, templates, Yf
-            )
-            for a in X
-        )
-        rhos = np.stack(rhos)
-        return rhos
+#     def transform(self, X: ndarray):
+#         X = np.reshape(X, (-1, *X.shape[-2:]))
+#         X = X - np.mean(X, axis=-1, keepdims=True)
+#         templates = self.templates_
+#         Yf = self.Yf_
+#         Us = self.Us_
+#         n_components = self.n_components
+#         rhos = Parallel(n_jobs=self.n_jobs)(
+#             delayed(partial(_ecca_feature, Us=Us, n_components=n_components))(
+#                 a, templates, Yf
+#             )
+#             for a in X
+#         )
+#         rhos = np.stack(rhos)
+#         return rhos
 
-    def predict(self, X: ndarray):
-        rhos = self.transform(X)
-        labels = self.classes_[np.argmax(rhos, axis=-1)]
-        return labels
+#     def predict(self, X: ndarray):
+#         rhos = self.transform(X)
+#         labels = self.classes_[np.argmax(rhos, axis=-1)]
+#         return labels
 
 
 class FBECCA(FilterBankSSVEP, ClassifierMixin):
@@ -472,7 +476,8 @@ class FBECCA(FilterBankSSVEP, ClassifierMixin):
             n_jobs=n_jobs,
         )
 
-    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):  # type: ignore[override]
+    # type: ignore[override]
+    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):
         self.classes_ = np.unique(y)
         super().fit(X, y, Yf=Yf)
         return self
@@ -493,7 +498,8 @@ def _ttcca_template(X: ndarray, y: ndarray, y_sub: Optional[ndarray] = None):
     X = X - np.mean(X, axis=-1, keepdims=True)
     labels = np.unique(y)
     if y_sub is None:
-        templates = np.stack([np.mean(X[y == label], axis=0) for label in labels])
+        templates = np.stack([np.mean(X[y == label], axis=0)
+                             for label in labels])
     else:
         subjects = np.unique(y_sub)
         templates = 0
@@ -756,7 +762,8 @@ class FBMsetCCA(FilterBankSSVEP, ClassifierMixin):
             n_jobs=n_jobs,
         )
 
-    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):  # type: ignore[override]
+    # type: ignore[override]
+    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):
         self.classes_ = np.unique(y)
         super().fit(X, y, Yf=Yf)
         return self
@@ -854,7 +861,8 @@ class FBMsetCCAR(FilterBankSSVEP, ClassifierMixin):
             n_jobs=n_jobs,
         )
 
-    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):  # type: ignore[override]
+    # type: ignore[override]
+    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):
         self.classes_ = np.unique(y)
         super().fit(X, y, Yf=Yf)
         return self
@@ -927,7 +935,8 @@ class TRCA(BaseEstimator, TransformerMixin, ClassifierMixin):
             [np.mean(X[y == label], axis=0) for label in self.classes_]
         )
 
-        self.Us_ = np.stack([_trca_kernel(X[y == label]) for label in self.classes_])
+        self.Us_ = np.stack([_trca_kernel(X[y == label])
+                            for label in self.classes_])
         return self
 
     def transform(self, X: ndarray):
@@ -974,7 +983,8 @@ class FBTRCA(FilterBankSSVEP, ClassifierMixin):
             n_jobs=n_jobs,
         )
 
-    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):  # type: ignore[override]
+    # type: ignore[override]
+    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):
         self.classes_ = np.unique(y)
         super().fit(X, y, Yf=Yf)
         return self
@@ -1078,7 +1088,8 @@ class FBTRCAR(FilterBankSSVEP, ClassifierMixin):
             n_jobs=n_jobs,
         )
 
-    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):  # type: ignore[override]
+    # type: ignore[override]
+    def fit(self, X: ndarray, y: ndarray, Yf: Optional[ndarray] = None):
         self.classes_ = np.unique(y)
         super().fit(X, y, Yf=Yf)
         return self
