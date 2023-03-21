@@ -164,6 +164,7 @@ class BaseDataset(metaclass=ABCMeta):
 
         data = dict()
         for subject in subjects:
+            print("Subject",subject)
             if subject not in self.subjects:
                 raise ValueError("Invalid subject {} given".format(subject))
             data[subject] = self._get_single_subject_data(subject)

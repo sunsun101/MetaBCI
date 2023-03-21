@@ -90,154 +90,156 @@ class Wang2016(BaseDataset):
     1. sub5 is not available from the download url.
     """
 
-    _CHANNELS = [
-        "FP1",
-        "FPZ",
-        "FP2",
-        "AF3",
-        "AF4",
-        "F7",
-        "F5",
-        "F3",
-        "F1",
-        "FZ",
-        "F2",
-        "F4",
-        "F6",
-        "F8",
-        "FT7",
-        "FC5",
-        "FC3",
-        "FC1",
-        "FCZ",
-        "FC2",
-        "FC4",
-        "FC6",
-        "FT8",
-        "T7",
-        "C5",
-        "C3",
-        "C1",
-        "CZ",
-        "C2",
-        "C4",
-        "C6",
-        "T8",
-        "TP7",
-        "CP5",
-        "CP3",
-        "CP1",
-        "CPZ",
-        "CP2",
-        "CP4",
-        "CP6",
-        "TP8",
-        "P7",
-        "P5",
-        "P3",
-        "P1",
-        "PZ",
-        "P2",
-        "P4",
-        "P6",
-        "P8",
-        "PO7",
-        "PO5",
-        "PO3",
-        "POZ",
-        "PO4",
-        "PO6",
-        "PO8",
-        "O1",
-        "OZ",
-        "O2",
-    ]
+    # _CHANNELS = [
+    #     "FP1",
+    #     "FPZ",
+    #     "FP2",
+    #     "AF3",
+    #     "AF4",
+    #     "F7",
+    #     "F5",
+    #     "F3",
+    #     "F1",
+    #     "FZ",
+    #     "F2",
+    #     "F4",
+    #     "F6",
+    #     "F8",
+    #     "FT7",
+    #     "FC5",
+    #     "FC3",
+    #     "FC1",
+    #     "FCZ",
+    #     "FC2",
+    #     "FC4",
+    #     "FC6",
+    #     "FT8",
+    #     "T7",
+    #     "C5",
+    #     "C3",
+    #     "C1",
+    #     "CZ",
+    #     "C2",
+    #     "C4",
+    #     "C6",
+    #     "T8",
+    #     "TP7",
+    #     "CP5",
+    #     "CP3",
+    #     "CP1",
+    #     "CPZ",
+    #     "CP2",
+    #     "CP4",
+    #     "CP6",
+    #     "TP8",
+    #     "P7",
+    #     "P5",
+    #     "P3",
+    #     "P1",
+    #     "PZ",
+    #     "P2",
+    #     "P4",
+    #     "P6",
+    #     "P8",
+    #     "PO7",
+    #     "PO5",
+    #     "PO3",
+    #     "POZ",
+    #     "PO4",
+    #     "PO6",
+    #     "PO8",
+    #     "O1",
+    #     "OZ",
+    #     "O2",
+    # ]
+    _CHANNELS = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
+    _FREQS = [8, 8.2, 8.4, 8.6, 8.8, 9, 9.2, 9.4, 9.6]
+    _PHASES = [0 , 0.35 , 0.70 , 1.05 , 1.40 , 1.75, 0.10, 0.45, 0.80]
+    # _FREQS = [
+    #     8,
+    #     9,
+    #     10,
+    #     11,
+    #     12,
+    #     13,
+    #     14,
+    #     15,
+    #     8.2,
+    #     9.2,
+    #     10.2,
+    #     11.2,
+    #     12.2,
+    #     13.2,
+    #     14.2,
+    #     15.2,
+    #     8.4,
+    #     9.4,
+    #     10.4,
+    #     11.4,
+    #     12.4,
+    #     13.4,
+    #     14.4,
+    #     15.4,
+    #     8.6,
+    #     9.6,
+    #     10.6,
+    #     11.6,
+    #     12.6,
+    #     13.6,
+    #     14.6,
+    #     15.6,
+    #     8.8,
+    #     9.8,
+    #     10.8,
+    #     11.8,
+    #     12.8,
+    #     13.8,
+    #     14.8,
+    #     15.8,
+    # ]
 
-    _FREQS = [
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        8.2,
-        9.2,
-        10.2,
-        11.2,
-        12.2,
-        13.2,
-        14.2,
-        15.2,
-        8.4,
-        9.4,
-        10.4,
-        11.4,
-        12.4,
-        13.4,
-        14.4,
-        15.4,
-        8.6,
-        9.6,
-        10.6,
-        11.6,
-        12.6,
-        13.6,
-        14.6,
-        15.6,
-        8.8,
-        9.8,
-        10.8,
-        11.8,
-        12.8,
-        13.8,
-        14.8,
-        15.8,
-    ]
-
-    _PHASES = [
-        0,
-        0.5,
-        1,
-        1.5,
-        0,
-        0.5,
-        1,
-        1.5,
-        0.5,
-        1,
-        1.5,
-        0,
-        0.5,
-        1,
-        1.5,
-        0,
-        1,
-        1.5,
-        0,
-        0.5,
-        1,
-        1.5,
-        0,
-        0.5,
-        1.5,
-        0,
-        0.5,
-        1,
-        1.5,
-        0,
-        0.5,
-        1,
-        0,
-        0.5,
-        1,
-        1.5,
-        0,
-        0.5,
-        1,
-        1.5,
-    ]
+    # _PHASES = [
+    #     0,
+    #     0.5,
+    #     1,
+    #     1.5,
+    #     0,
+    #     0.5,
+    #     1,
+    #     1.5,
+    #     0.5,
+    #     1,
+    #     1.5,
+    #     0,
+    #     0.5,
+    #     1,
+    #     1.5,
+    #     0,
+    #     1,
+    #     1.5,
+    #     0,
+    #     0.5,
+    #     1,
+    #     1.5,
+    #     0,
+    #     0.5,
+    #     1.5,
+    #     0,
+    #     0.5,
+    #     1,
+    #     1.5,
+    #     0,
+    #     0.5,
+    #     1,
+    #     0,
+    #     0.5,
+    #     1,
+    #     1.5,
+    #     0,
+    #     0.5,
+    #     1,
+    #     1.5,
+    # ]
 
     _EVENTS = {str(freq): (i + 1, (0, 5)) for i, freq in enumerate(_FREQS)}
 
@@ -264,7 +266,9 @@ class Wang2016(BaseDataset):
             raise (ValueError("Invalid subject id"))
 
         subject = cast(int, subject)
+        # url = "http://bci.med.tsinghua.edu.cn/upload/yijun/sunsun.mat.7z"
         url = "{:s}S{:d}.mat.7z".format(Wang2016_URL, subject)
+        # print("URL ======>", url)
         file_dest = mne_data_path(
             url,
             "tsinghua",
@@ -273,7 +277,8 @@ class Wang2016(BaseDataset):
             force_update=force_update,
             update_path=update_path,
         )
-
+        file_dest = r"C:\Users\bci\mne_data\MNE-tsinghua-data\upload\yijun\sunsun.mat.7z"
+        print("File destination ======>", file_dest[:-3])
         if not os.path.exists(file_dest[:-3]):
             # decompression the data
             with py7zr.SevenZipFile(file_dest, "r") as archive:
@@ -287,30 +292,36 @@ class Wang2016(BaseDataset):
         dests = self.data_path(subject)
         raw_mat = loadmat(dests[0][0])
         epoch_data = raw_mat["data"] * 1e-6
-        stim = np.zeros((1, *epoch_data.shape[1:]))
+        # stim = np.zeros((1, *epoch_data.shape[1:]))
         # insert event label at stimulus-onset
         # 0.5s latency
-        stim[0, 125] = np.tile(
-            np.arange(1, 41)[:, np.newaxis], (1, epoch_data.shape[-1])
-        )
-        epoch_data = np.concatenate((epoch_data, stim), axis=0)
+        print("Epoch data", epoch_data.shape)
+        # stim[0, 125] = np.tile(
+        #     np.arange(1, 41)[:, np.newaxis], (1, epoch_data.shape[-1])
+        # )
+        # epoch_data = np.concatenate((epoch_data, stim), axis=0)
         data = np.transpose(epoch_data, (0, 3, 2, 1))
-
-        montage = make_standard_montage("standard_1005")
+        print('Shape after transposing =====>', data.shape)
+        montage = make_standard_montage("standard_1020")
         montage.rename_channels(
             {ch_name: ch_name.upper() for ch_name in montage.ch_names}
         )
         # montage.ch_names = [ch_name.upper() for ch_name in montage.ch_names]
         ch_names = [ch_name.upper() for ch_name in self._CHANNELS]
-        ch_names.insert(32, "M1")
-        ch_names.insert(42, "M2")
-        ch_names.insert(59, "CB1")
-        ch_names = ch_names + ["CB2", "STI 014"]
-        ch_types = ["eeg"] * 65
-        ch_types[59] = "misc"
-        ch_types[63] = "misc"
+        ch_names = ch_names + ['STIM']
+        ch_types = ["eeg"] * 9
         ch_types[-1] = "stim"
-
+        # ch_names = [ch_name.upper() for ch_name in self._CHANNELS]
+        # ch_names.insert(32, "M1")
+        # ch_names.insert(42, "M2")
+        # ch_names.insert(59, "CB1")
+        # ch_names = ch_names + ["CB2", "STI 014"]
+        # ch_types = ["eeg"] * 65
+        # ch_types[59] = "misc"
+        # ch_types[63] = "misc"
+        # ch_types[-1] = "stim"
+        print(ch_names)
+        print(ch_types)
         info = create_info(ch_names=ch_names,
                            ch_types=ch_types, sfreq=self.srate)
 

@@ -17,10 +17,10 @@ filterbank = generate_filterbank(wp,ws,srate=250,order=15,rp=0.5)
 dataset = Wang2016()
 
 paradigm = SSVEP(
-    channels=['POZ', 'PZ', 'PO3', 'PO5', 'PO4', 'PO6', 'O1', 'OZ', 'O2'],
+    channels=['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8'],
     intervals=[(0.14, 0.64)],
     srate=250
-)
+) 
 
 
 # add 5-90Hz bandpass filter in raw hook

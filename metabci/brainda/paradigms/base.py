@@ -97,13 +97,16 @@ class BaseParadigm(metaclass=ABCMeta):
         """
         event_list = self.event_list
         intervals = self.intervals
-
+        
         if event_list is None:
             # use all events in dataset
             event_list = list(dataset.events.keys())
-
-        used_events = {ev: dataset.events[ev][0] for ev in event_list}
-
+        print("Event lists ======>", event_list)
+        print("Intervals =====>", intervals)
+        # used_events = {ev: dataset.events[ev][0] for ev in event_list}
+        used_events = {'8': 1, '8.2': 2, '8.4': 3, '8.6': 10, '8.8': 11, '9': 12, '9.2': 19, '9.4': 20, '9.6': 21}
+        print("Used events =====>", used_events)
+        
         if intervals is None:
             used_intervals = {ev: dataset.events[ev][1] for ev in event_list}
         elif len(intervals) == 1:
@@ -115,7 +118,7 @@ class BaseParadigm(metaclass=ABCMeta):
             used_intervals = {
                 ev: interval for ev, interval in zip(event_list, intervals)
             }
-
+        print("Used Interval =====>", used_intervals)
         return used_events, used_intervals
 
     def register_raw_hook(self, hook):
@@ -193,7 +196,7 @@ class BaseParadigm(metaclass=ABCMeta):
         metas = {}
 
         data = dataset.get_data([subject_id])
-
+        print("data ======>", data)
         for subject, sessions in data.items():
             for session, runs in sessions.items():
                 for run, raw in runs.items():
@@ -210,22 +213,27 @@ class BaseParadigm(metaclass=ABCMeta):
                         if self.select_channels is None
                         else self.select_channels
                     )
+                    print("channels =====>", channels)
                     picks = pick_channels(raw.ch_names, channels, ordered=True)
-
+                    print("picks ======>", picks)
                     # find available events, first check stim_channels then annotations
                     stim_channels = mne.utils._get_stim_channel(
                         None, raw.info, raise_error=False
                     )
+                    print("stim_channels =====>", stim_channels)
+                    pd = raw.to_data_frame()
+                    print(pd)
                     if len(stim_channels) > 0:
                         events = mne.find_events(
                             raw, shortest_event=0, initial_event=True
                         )
+                        print("is events empty? ======>", events)
                     else:
                         # convert event_id to its number type instead of default auto-renaming in 0.19.2
                         events, _ = mne.events_from_annotations(
                             raw, event_id=(lambda x: int(x))
                         )
-
+                    print("events =====>", events)
                     for event_name in used_events.keys():
                         # mne.pick_events returns any matching events in include
                         # only raise Runtime Error when nothing is found
@@ -238,7 +246,7 @@ class BaseParadigm(metaclass=ABCMeta):
                             continue
 
                         # transform Raw to Epochs
-
+                        print("selected events =====>", selected_events)
                         epochs = mne.Epochs(
                             raw,
                             selected_events,
@@ -316,6 +324,8 @@ class BaseParadigm(metaclass=ABCMeta):
                             )
                         else:
                             metas[event_name] = meta
+        # print("Xs ======>", Xs)
+        # print("ys =====>",ys)
         return Xs, ys, metas
 
     @verbose
@@ -383,6 +393,11 @@ class BaseParadigm(metaclass=ABCMeta):
         )
 
         for event_name in used_events.keys():
+           
+            # for i in range(len(subjects)): 
+            #     print("i is", i)
+            #     print(X[i])
+            #     print("X",X)
             Xs[event_name] = np.concatenate(
                 [X[i][event_name]
                     for i in range(len(subjects)) if event_name in X[i]],

@@ -425,7 +425,8 @@ class ECCA(BaseEstimator, TransformerMixin, ClassifierMixin):
         Yf = Yf - np.mean(Yf, axis=-1, keepdims=True)
         self.Yf_ = Yf
         self.Us_, self.Vs_ = zip(
-            *[ 
+            *[
+                _scca_kernel(self.templates_[i], self.Yf_[i])
                 for i in range(len(self.classes_))
             ]
         )
