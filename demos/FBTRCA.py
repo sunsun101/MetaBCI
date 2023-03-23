@@ -5,7 +5,7 @@ from metabci.brainda.algorithms.utils.model_selection import (
     set_random_seeds,
     generate_kfold_indices,
     match_kfold_indices)
-from metabci.brainda.algorithms.decomposition import FBTRCA
+from metabci.brainda.algorithms.decomposition import FBTRCA, TRCA
 from metabci.brainda.algorithms.decomposition.base import generate_filterbank
 
 
@@ -26,6 +26,8 @@ paradigm = SSVEP(
 # add 5-90Hz bandpass filter in raw hook
 def raw_hook(raw, caches):
     # do something with raw object
+    # raw.pick_channels(ch_names=['Pz', 'PO7', 'Oz', 'PO8'])
+    # print(raw.ch_names)
     raw.filter(5, 90, l_trans_bandwidth=2,h_trans_bandwidth=5,
         phase='zero-double')
     caches['raw_stage'] = caches.get('raw_stage', -1) + 1
@@ -58,24 +60,34 @@ X, y, meta = paradigm.get_data(
     n_jobs=None,
     verbose=False)
 
+# ['FZ', 'C3', 'CZ', 'C4', 'PZ', 'PO7', 'OZ', 'PO8', 'STIM']
+# print(X.shape) => (45, 8, 535)
+# X = X[:, 4:8 ,:]
 # 6-fold cross validation
 set_random_seeds(38)
-kfold = 6
+kfold = 5
 indices = generate_kfold_indices(meta, kfold=kfold)
 
 # classifier
 filterweights = [(idx_filter+1) ** (-1.25) + 0.25 for idx_filter in range(5)]
-estimator = FBTRCA(filterbank=filterbank,n_components = 1, ensemble = True,filterweights=np.array(filterweights), n_jobs=-1)
+# estimator = FBTRCA(filterbank=filterbank,n_components = 1, ensemble = True,filterweights=np.array(filterweights), n_jobs=-1)
+estimator = TRCA(n_components = 1, n_jobs = 1)
 
 
-accs = []
-for k in range(kfold):
-    train_ind, validate_ind, test_ind = match_kfold_indices(k, meta, indices)
-    # merge train and validate set
-    train_ind = np.concatenate((train_ind, validate_ind))
-    p_labels = estimator.fit(X[train_ind], y[train_ind]).predict(X[test_ind])
+# accs = []
+# for k in range(kfold):
+#     train_ind, validate_ind, test_ind = match_kfold_indices(k, meta, indices)
+#     # merge train and validate set
+#     train_ind = np.concatenate((train_ind, validate_ind))
+#     p_labels = estimator.fit(X[train_ind], y[train_ind]).predict(X[test_ind])
 
-    accs.append(np.mean(p_labels==y[test_ind]))
-print(np.mean(accs))
+#     accs.append(np.mean(p_labels==y[test_ind]))
+# print(np.mean(accs))
+model = estimator.fit(X, y)
+preds = model.predict(X)
+acc = np.mean(preds==y)
+print(y)
+print(preds)
+print(acc)
 # If everything is fine, you will get the accuracy about 0.9417.
 

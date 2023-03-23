@@ -291,11 +291,13 @@ class Wang2016(BaseDataset):
     ) -> Dict[str, Dict[str, Raw]]:
         dests = self.data_path(subject)
         raw_mat = loadmat(dests[0][0])
-        epoch_data = raw_mat["data"] * 1e-6
+        # epoch_data = raw_mat["data"] * 1e-6
+        raw_mat["data"][:-1] = raw_mat["data"][:-1] * 1e-6
+        epoch_data = raw_mat["data"]
         # stim = np.zeros((1, *epoch_data.shape[1:]))
         # insert event label at stimulus-onset
         # 0.5s latency
-        print("Epoch data", epoch_data.shape)
+        # print("Epoch data", epoch_data.shape)
         # stim[0, 125] = np.tile(
         #     np.arange(1, 41)[:, np.newaxis], (1, epoch_data.shape[-1])
         # )
